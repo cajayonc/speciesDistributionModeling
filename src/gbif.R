@@ -24,3 +24,17 @@ speciesKey<-spiderBackbone$usageKey
 occ_download(pred("taxonKey",speciesKey), format = "SIMPLE_CSV")
 
 write_csv(d, "data/rawData.csv")
+
+#cleaning
+
+fData <- d %>%
+  filter(!is.na(decimalLatitude), !is.na(decimalLongitude))
+
+fData <- fData %>%
+  filter(countryCode %in% c("US", "CA", "MX"))
+
+fData <- fData %>%
+  filter(!basisOfRecord %in% c("FOSSIL_SPECIMEN", "LVING_SPECIMEN"))
+
+fData<- fData %>%
+  cc_sea(lon="decimalLongitude", lat = "decimalLatitude")
