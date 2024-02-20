@@ -17,6 +17,7 @@ if(any(installed_packages==FALSE)){
 invisible(lapply(packages, library, character.only=TRUE))
 
 usethis:: edit_r_environ()
+#after typing in credentials - restart R and load packages
 
 spiderBackbone<-name_backbone(name="Habronattus americanus")
 speciesKey<-spiderBackbone$usageKey
@@ -25,8 +26,7 @@ occ_download(pred("taxonKey",speciesKey), format = "SIMPLE_CSV")
 
 write_csv(d, "data/rawData.csv")
 
-#cleaning
-
+#cleaning 
 fData <- d %>%
   filter(!is.na(decimalLatitude), !is.na(decimalLongitude))
 
@@ -38,3 +38,17 @@ fData <- fData %>%
 
 fData<- fData %>%
   cc_sea(lon="decimalLongitude", lat = "decimalLatitude")
+
+#remove duplicates
+fData <- fData %>%
+  distinct(decimalLongitude,decimalLatitude,speciesKey,datasetKey, .keep_all= TRUE)
+
+#one fell swoop: (learing purpose)
+# cleanData <- d %>%
+#   filter(!is.na(decimalLatitude), !is.na(decimalLongitude)) %>%
+#   filter(countryCode %in% c("US", "CA", "MX")) %>%
+#   filter(!basisOfRecord %in% c("FOSSIL_SPECIMEN", "LVING_SPECIMEN")) %>%
+#   cc_sea(lon="decimalLongitude", lat = "decimalLatitude") %>%
+#   distinct(decimalLongitude,decimalLatitude,speciesKey,datasetKey, .keep_all= TRUE)
+  
+  
